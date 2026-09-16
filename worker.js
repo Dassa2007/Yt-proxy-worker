@@ -13,7 +13,7 @@ export default {
     }
 
     // ============================
-    // /proxy — Video file proxy
+    // /proxy — Video/Audio file proxy
     // ============================
     if (url.pathname === "/proxy") {
       const targetUrl = url.searchParams.get("url");
@@ -66,22 +66,28 @@ export default {
     }
 
     // ============================
-    // / — YouTube API
+    // / — YouTube API (type support)
     // ============================
     if (url.pathname === "/" || url.pathname === "") {
       const videoUrl = url.searchParams.get("url");
+      const type = url.searchParams.get("type") || "mp4";
 
       if (!videoUrl) {
         return new Response(JSON.stringify({
           status: "online",
           name: "YT Worker API",
+          usage: "?url=https://youtube.com/watch?v=...&type=mp3"
         }), {
           headers: { ...corsHeaders, "Content-Type": "application/json" }
         });
       }
 
       try {
-        const apiUrl = "https://multidl.kcey.workers.dev/?url=" + encodeURIComponent(videoUrl);
+        // ⭐ type parameter එකත් යවනවා
+        const apiUrl = "https://multidl.kcey.workers.dev/?url=" + 
+                       encodeURIComponent(videoUrl) + 
+                       "&type=" + type;
+
         const res = await fetch(apiUrl, {
           headers: { "User-Agent": "Mozilla/5.0" }
         });
